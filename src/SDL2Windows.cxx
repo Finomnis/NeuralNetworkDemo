@@ -61,7 +61,7 @@ SDL2Window::SDL2Window(std::shared_ptr<SDL2Initializer> init_, std::string name)
     if (window == nullptr)
         Log::errAndQuit(SDL_GetError());
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer == nullptr)
         Log::errAndQuit(SDL_GetError());
 
@@ -90,8 +90,25 @@ SDL2Window::render()
 {
     SDL_SetRenderDrawColor(renderer, 64, 0, 128, 255);
     SDL_RenderClear(renderer);
+
+    int w, h;
+    SDL_GetRendererOutputSize(renderer, &w, &h);
+    for (auto &subwindow : subwindows)
+    {
+        const SDL2SubwindowSize &size = subwindow.second;
+        int x0 = int(size.x0 * w + 0.5f);
+        int x1 = int(size.x1 * w + 0.5f);
+        int y0 = int(size.y0 * h + 0.5f);
+        int y1 = int(size.y1 * h + 0.5f);
+        SDL_Rect rect;
+        rect.x = x0;
+        rect.y = y0;
+        rect.w = x1 - x0;
+        rect.h = y1 - y0;
+        subwindow.first->render(renderer, rect);
+    }
+
     SDL_RenderPresent(renderer);
-    // TODO render subwindows
 }
 
 SDL2Subwindow::SDL2Subwindow()
@@ -101,10 +118,19 @@ SDL2Subwindow::SDL2Subwindow()
 
 SDL2Subwindow::~SDL2Subwindow()
 {
-
+    if (window)
+        window->subwindows.erase(this);
 }
 
-void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window>, float x0, float y0, float x1, float y1)
+void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window> window_, float x0, float y0, float x1, float y1)
 {
-    // TODO
+    window = window_;
+    window->subwindows[this] = SDL2SubwindowSize(x0, y0, x1, y1);
+}
+
+void SDL2Subwindow::render(SDL_Renderer *renderer, SDL_Rect &rect)
+{
+    SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    Log::msg("RENDER!");
 }

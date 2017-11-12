@@ -23,6 +23,9 @@ class SDL2Initializer
 
 struct SDL2SubwindowSize
 {
+    SDL2SubwindowSize()
+        : x0(0), y0(0), x1(1), y1(1)
+    {}
     SDL2SubwindowSize(float x0, float y0, float x1, float y1)
         : x0(x0), y0(y0), x1(x1), y1(y1)
     {}
@@ -33,6 +36,7 @@ class SDL2Subwindow;
 class SDL2Window
 {
         friend class SDL2Initializer;
+        friend class SDL2Subwindow;
     public:
         SDL2Window(std::shared_ptr<SDL2Initializer> init, std::string name);
         ~SDL2Window();
@@ -55,6 +59,10 @@ class SDL2Subwindow
         SDL2Subwindow();
         ~SDL2Subwindow();
         void addToWindow(std::shared_ptr<SDL2Window> window, float x0, float y0, float x1, float y1);
+        void render(SDL_Renderer *renderer, SDL_Rect &rect);
+
+    private:
+        std::shared_ptr<SDL2Window> window;
 };
 
 
