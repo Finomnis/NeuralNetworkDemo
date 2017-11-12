@@ -55,6 +55,10 @@ class SDL2Window
         void onEvent(SDL_Event &event);
         void render();
 
+    private:
+        SDL_Rect getSubwindowRect(SDL2SubwindowSize &size);
+        SDL_Rect getSubwindowRect(SDL2Subwindow *window);
+
 };
 
 class SDL2Subwindow
@@ -63,8 +67,11 @@ class SDL2Subwindow
         SDL2Subwindow();
         ~SDL2Subwindow();
         void addToWindow(std::shared_ptr<SDL2Window> window, float x0, float y0, float x1, float y1);
-        virtual void render(SDL_Renderer *renderer, SDL_Rect &rect) = 0;
-        virtual void onEvent(SDL_Event &event) = 0;
+        virtual void render(SDL_Surface *surface) = 0;
+        virtual void onEvent(SDL_Event &event, SDL_Rect &subwindowSize) = 0;
+
+    protected:
+        static SDL_Point relativeMousePosition(int x, int y, SDL_Rect &subwindowSize);
 
     private:
         std::shared_ptr<SDL2Window> window;
