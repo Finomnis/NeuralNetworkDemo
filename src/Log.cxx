@@ -34,3 +34,20 @@ void Log::msg(std::string str)
     ss << getTime() << " | " << str << std::endl;
     std::cout << ss.str() << std::flush;
 }
+
+
+void Log::err(std::string str)
+{
+    std::stringstream ss;
+    ss << getTime() << " | ERROR: " << str << std::endl;
+    std::cerr << ss.str() << std::flush;
+}
+
+
+void Log::errAndQuit(std::string str)
+{
+    std::stringstream ss;
+    ss << getTime() << " | ERROR: " << str << std::endl;
+    std::cerr << ss.str() << std::flush;
+    std::exit(EXIT_FAILURE);
+}

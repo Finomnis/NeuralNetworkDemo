@@ -17,6 +17,11 @@ set(SRC
   src/SDL2Windows.cxx
   src/Log.hxx
   src/Log.cxx
+  src/NeuralNetwork/NeuralNetwork.hxx
+  src/NeuralNetwork/NeuralNetwork.cxx
+  src/NeuralNetwork/InteractiveSubwindow.hxx
+  src/NeuralNetwork/InteractiveSubwindow.cxx
+
 )
 add_executable(NeuralNetworkDemo ${SRC})
 
