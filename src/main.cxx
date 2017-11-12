@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<NeuralNetwork::NeuralNetwork> neuralNetwork = std::make_shared<NeuralNetwork::NeuralNetwork>();
 
     NeuralNetwork::InteractiveSubwindow interactiveSubwindow(neuralNetwork);
-    interactiveSubwindow.addToWindow(window, 0, 0, 0.6f, 1);
+    interactiveSubwindow.addToWindow(window, 0.3f, 0.4f, 0.6f, 0.7f);
     //window.addSubwindow(0.5f, 0, 1, 0.5f, NeuralNetwork::VisualizationSubwindow(neuralNetwork));
     //window.addSubwindow(0.5f, 0.5f, 1, 1, neuralNetwork::neuralNetworkSettingsSubwindow(neuralNetwork));
 

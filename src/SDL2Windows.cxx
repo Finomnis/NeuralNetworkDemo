@@ -1,11 +1,26 @@
 #include "SDL2Windows.hxx"
 #include "Log.hxx"
 
+#include <sstream>
+
+namespace
+{
+
+#define SDL(func){\
+    if((func)!=0){\
+        std::stringstream ss;\
+        ss << __FILE__ << "(" << __LINE__ << "): SDL: " << SDL_GetError();\
+        Log::errAndQuit(ss.str());\
+    }\
+}
+
+}
+
 SDL2Initializer::SDL2Initializer()
 {
     Log::msg("Initializing SDL2 ...");
     SDL_SetMainReady();
-    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL(SDL_Init(SDL_INIT_EVERYTHING));
 }
 
 SDL2Initializer::~SDL2Initializer()
@@ -84,31 +99,34 @@ SDL2Window::onEvent(SDL_Event &event)
 {
     for (auto &subwindow : subwindows)
     {
-        subwindow.first->onEvent(event);
+        SDL_Rect rect = getSubwindowRect(subwindow.first);
+        subwindow.first->onEvent(event, rect);
     }
 }
 
 void
 SDL2Window::render()
 {
-    SDL_SetRenderDrawColor(renderer, 64, 0, 128, 255);
-    SDL_RenderClear(renderer);
+    SDL(SDL_SetRenderDrawColor(renderer, 64, 0, 128, 255));
+    SDL(SDL_RenderClear(renderer));
 
-    int w, h;
-    SDL_GetRendererOutputSize(renderer, &w, &h);
     for (auto &subwindow : subwindows)
     {
-        const SDL2SubwindowSize &size = subwindow.second;
-        int x0 = int(size.x0 * w + 0.5f);
-        int x1 = int(size.x1 * w + 0.5f);
-        int y0 = int(size.y0 * h + 0.5f);
-        int y1 = int(size.y1 * h + 0.5f);
-        SDL_Rect rect;
-        rect.x = x0;
-        rect.y = y0;
-        rect.w = x1 - x0;
-        rect.h = y1 - y0;
-        subwindow.first->render(renderer, rect);
+        SDL_Rect rect = getSubwindowRect(subwindow.second);
+        SDL_Surface *&surface = subwindowRenderTargets[subwindow.first];
+        if (surface == nullptr || surface->w != rect.w || surface->h != rect.h)
+        {
+            SDL_FreeSurface(surface);
+            surface = SDL_CreateRGBSurface(0, rect.w, rect.h, 32, 0x0000ff, 0x00ff00, 0xff0000, 0xff000000);
+            if (surface == nullptr)
+                Log::errAndQuit(SDL_GetError());
+        }
+        subwindow.first->render(surface);
+        SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, surface);
+        if (tex == nullptr)
+            Log::errAndQuit(SDL_GetError());
+        SDL(SDL_RenderCopy(renderer, tex, nullptr, &rect));
+        SDL_DestroyTexture(tex);
     }
 
     SDL_RenderPresent(renderer);
@@ -132,6 +150,26 @@ void SDL2Window::removeSubwindow(SDL2Subwindow *subwindow)
     subwindows.erase(subwindow);
 }
 
+SDL_Rect SDL2Window::getSubwindowRect(SDL2SubwindowSize &size)
+{
+    int w, h;
+    SDL(SDL_GetRendererOutputSize(renderer, &w, &h));
+    int x0 = int(size.x0 * w + 0.5f);
+    int x1 = int(size.x1 * w + 0.5f);
+    int y0 = int(size.y0 * h + 0.5f);
+    int y1 = int(size.y1 * h + 0.5f);
+    SDL_Rect rect;
+    rect.x = x0;
+    rect.y = y0;
+    rect.w = x1 - x0;
+    rect.h = y1 - y0;
+    return rect;
+}
+SDL_Rect SDL2Window::getSubwindowRect(SDL2Subwindow *window)
+{
+    return getSubwindowRect(subwindows.at(window));
+}
+
 SDL2Subwindow::SDL2Subwindow()
 {
 
@@ -149,3 +187,7 @@ void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window> window_, float x0, f
     window->addSubwindow(this, x0, y0, x1, y1);
 }
 
+SDL_Point SDL2Subwindow::relativeMousePosition(int x, int y, SDL_Rect &subwindowSize)
+{
+    return SDL_Point({x - subwindowSize.x, y - subwindowSize.y});
+}
