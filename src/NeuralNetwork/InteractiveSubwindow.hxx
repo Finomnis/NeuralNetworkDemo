@@ -15,6 +15,10 @@ class InteractiveSubwindow : public SDL2Subwindow
         InteractiveSubwindow(std::shared_ptr<NeuralNetwork> nn);
         ~InteractiveSubwindow();
 
+        void render(SDL_Renderer *renderer, SDL_Rect &rect);
+        void onEvent(SDL_Event &event);
+
+
     private:
         std::shared_ptr<NeuralNetwork> neuralNetwork;
 };

@@ -59,7 +59,8 @@ class SDL2Subwindow
         SDL2Subwindow();
         ~SDL2Subwindow();
         void addToWindow(std::shared_ptr<SDL2Window> window, float x0, float y0, float x1, float y1);
-        void render(SDL_Renderer *renderer, SDL_Rect &rect);
+        virtual void render(SDL_Renderer *renderer, SDL_Rect &rect) = 0;
+        virtual void onEvent(SDL_Event &event) = 0;
 
     private:
         std::shared_ptr<SDL2Window> window;

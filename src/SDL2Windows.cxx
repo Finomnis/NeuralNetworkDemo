@@ -82,7 +82,10 @@ SDL2Window::~SDL2Window()
 void
 SDL2Window::onEvent(SDL_Event &event)
 {
-    // TODO
+    for (auto &subwindow : subwindows)
+    {
+        subwindow.first->onEvent(event);
+    }
 }
 
 void
@@ -128,9 +131,3 @@ void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window> window_, float x0, f
     window->subwindows[this] = SDL2SubwindowSize(x0, y0, x1, y1);
 }
 
-void SDL2Subwindow::render(SDL_Renderer *renderer, SDL_Rect &rect)
-{
-    SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    Log::msg("RENDER!");
-}
