@@ -114,6 +114,24 @@ SDL2Window::render()
     SDL_RenderPresent(renderer);
 }
 
+void SDL2Window::addSubwindow(SDL2Subwindow *subwindow, float x0, float y0, float x1, float y1)
+{
+    subwindows[subwindow] = SDL2SubwindowSize(x0, y0, x1, y1);
+}
+
+void SDL2Window::removeSubwindow(SDL2Subwindow *subwindow)
+{
+    {
+        auto renderTarget = subwindowRenderTargets.find(subwindow);
+        if (renderTarget != subwindowRenderTargets.end())
+        {
+            SDL_FreeSurface(renderTarget->second);
+        }
+    }
+    subwindowRenderTargets.erase(subwindow);
+    subwindows.erase(subwindow);
+}
+
 SDL2Subwindow::SDL2Subwindow()
 {
 
@@ -122,12 +140,12 @@ SDL2Subwindow::SDL2Subwindow()
 SDL2Subwindow::~SDL2Subwindow()
 {
     if (window)
-        window->subwindows.erase(this);
+        window->removeSubwindow(this);
 }
 
 void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window> window_, float x0, float y0, float x1, float y1)
 {
     window = window_;
-    window->subwindows[this] = SDL2SubwindowSize(x0, y0, x1, y1);
+    window->addSubwindow(this, x0, y0, x1, y1);
 }
 

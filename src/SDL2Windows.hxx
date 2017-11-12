@@ -46,6 +46,10 @@ class SDL2Window
         SDL_Renderer *renderer;
         std::shared_ptr<SDL2Initializer> init;
         std::map<SDL2Subwindow *, SDL2SubwindowSize> subwindows;
+        std::map<SDL2Subwindow *, SDL_Surface *> subwindowRenderTargets;
+
+        void addSubwindow(SDL2Subwindow *, float x0, float y0, float x1, float y1);
+        void removeSubwindow(SDL2Subwindow *);
 
     private:
         void onEvent(SDL_Event &event);
