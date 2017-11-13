@@ -2,6 +2,7 @@
 #include "Log.hxx"
 
 #include <sstream>
+#include <iostream>
 
 namespace
 {
@@ -170,6 +171,7 @@ SDL_Rect SDL2Window::getSubwindowRect(SDL2Subwindow *window)
     return getSubwindowRect(subwindows.at(window));
 }
 
+
 SDL2Subwindow::SDL2Subwindow()
 {
 
@@ -190,4 +192,13 @@ void SDL2Subwindow::addToWindow(std::shared_ptr<SDL2Window> window_, float x0, f
 SDL_Point SDL2Subwindow::relativeMousePosition(int x, int y, SDL_Rect &subwindowSize)
 {
     return SDL_Point({x - subwindowSize.x, y - subwindowSize.y});
+}
+
+bool SDL2Subwindow::isMouseInsideSubwindow(int x, int y, SDL_Rect &subwindowSize)
+{
+    if (x < subwindowSize.x || x >= subwindowSize.x + subwindowSize.w)
+        return false;
+    if (y < subwindowSize.y || y >= subwindowSize.y + subwindowSize.h)
+        return false;
+    return true;
 }

@@ -72,6 +72,7 @@ class SDL2Subwindow
 
     protected:
         static SDL_Point relativeMousePosition(int x, int y, SDL_Rect &subwindowSize);
+        static bool isMouseInsideSubwindow(int x, int y, SDL_Rect &subwindowSize);
 
     private:
         std::shared_ptr<SDL2Window> window;

@@ -3,11 +3,14 @@
 #include "../SDL2Windows.hxx"
 
 #include <memory>
+#include <list>
+#include <vector>
 
 namespace NeuralNetwork
 {
 
 class NeuralNetwork;
+struct TrainingSample;
 
 class InteractiveSubwindow : public SDL2Subwindow
 {
@@ -21,6 +24,11 @@ class InteractiveSubwindow : public SDL2Subwindow
 
     private:
         std::shared_ptr<NeuralNetwork> neuralNetwork;
+
+        std::list<TrainingSample> samples;
+        void removeIntersectingSamples(SDL_Rect &subwindowSize, SDL_Point mousePos);
+        void addSample(SDL_Rect &subwindowSize, SDL_Point mousePos, float value);
+
 };
 
 }
