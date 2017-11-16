@@ -18,9 +18,9 @@ class InteractiveSubwindow : public SDL2Subwindow
         InteractiveSubwindow(std::shared_ptr<NeuralNetwork> nn);
         ~InteractiveSubwindow();
 
+        void renderNetworkTexture();
         void render(SDL_Renderer *renderer, SDL_Rect &rect);
         void onEvent(SDL_Event &event, SDL_Rect &subwindowSize);
-
 
     private:
         std::shared_ptr<NeuralNetwork> neuralNetwork;
@@ -30,6 +30,8 @@ class InteractiveSubwindow : public SDL2Subwindow
         void addSample(SDL_Rect &subwindowSize, SDL_Point mousePos, float value);
 
         bool trainingDataChanged = false;
+
+        SDL_Surface *networkOutputSurface;
 
 };
 

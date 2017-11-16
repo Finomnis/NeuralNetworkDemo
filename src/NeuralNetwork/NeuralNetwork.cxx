@@ -13,7 +13,7 @@ namespace NeuralNetwork
 
 NeuralNetwork::NeuralNetwork(int inputSize, int outputSize)
 {
-    reinitialize({inputSize, 1, outputSize});
+    reinitialize({inputSize, 3, 3, 3, 3, 3, outputSize});
 }
 
 NeuralNetwork::~NeuralNetwork()
@@ -23,31 +23,38 @@ NeuralNetwork::~NeuralNetwork()
 void NeuralNetwork::reinitialize(std::vector<int> config)
 {
     std::default_random_engine randomDevice(time(0));
-    std::uniform_real_distribution<float> floatRand(-1.0f, 1.0f);
 
     // Weights
-    weights.resize(config.size() - 1);
-    for (size_t i = 0; i < config.size() - 1; i++)
     {
-        weights[i].resize(config[i + 1]);
-        for (int j = 0; j < config[i + 1]; j++)
+        std::uniform_real_distribution<float> floatRand(-10.0f, 10.0f);
+        weights.resize(config.size() - 1);
+        for (size_t i = 0; i < config.size() - 1; i++)
         {
-            weights[i][j].resize(config[i]);
-            for (int k = 0; k < config[i]; k++)
+            weights[i].resize(config[i + 1]);
+            for (int j = 0; j < config[i + 1]; j++)
             {
-                weights[i][j][k] = floatRand(randomDevice);
+                weights[i][j].resize(config[i]);
+                for (int k = 0; k < config[i]; k++)
+                {
+                    weights[i][j][k] = floatRand(randomDevice);
+                }
             }
         }
     }
 
     // Biases
-    biases.resize(config.size());
-    for (size_t i = 0; i < config.size(); i++)
     {
-        biases[i].resize(config[i]);
-        for (int j = 0; j < config[i]; j++)
+        std::uniform_real_distribution<float> floatRand(-0.2f, 0.2f);
+
+        biases.resize(config.size());
+        for (size_t i = 0; i < config.size(); i++)
         {
-            biases[i][j] = floatRand(randomDevice);
+            biases[i].resize(config[i]);
+            for (int j = 0; j < config[i]; j++)
+            {
+                biases[i][j] = floatRand(randomDevice);
+                if (i == 0) biases[i][j] += 0.5f;
+            }
         }
     }
 
@@ -65,7 +72,7 @@ NeuralNetwork::run(std::vector<float> input)
 
     for (size_t i = 0; i < input.size(); i++)
     {
-        currentValues[i] = input[i] + getBias(0, i);
+        currentValues[i] = input[i] - getBias(0, i);
     }
 
     for (int layer = 1; layer < getNumLayers(); layer++)

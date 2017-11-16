@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <ios>
+#include <cmath>
 
 namespace NeuralNetwork
 {
@@ -23,16 +24,12 @@ namespace
 
 void setValueColor(SDL_Renderer *renderer, float val)
 {
+    int col = std::min(int(std::fabs(val) * 20 + 0.5f), 255);
+
     if (val > 0)
-    {
-        int col = std::min(int(val * 255 + 0.5f), 255);
         SDL_SetRenderDrawColor(renderer, 0, col, 0, 255);
-    }
     else
-    {
-        int col = std::min(int(-val * 255 + 0.5f), 255);
         SDL_SetRenderDrawColor(renderer, col, 0, 0, 255);
-    }
 }
 
 }
