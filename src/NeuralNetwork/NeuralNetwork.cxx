@@ -4,6 +4,9 @@
 
 #include <random>
 #include <chrono>
+#include <algorithm>
+
+#include <iostream>
 
 namespace NeuralNetwork
 {
@@ -16,29 +19,10 @@ NeuralNetwork::NeuralNetwork(int inputSize, int outputSize)
 NeuralNetwork::~NeuralNetwork()
 {}
 
-inline int NeuralNetwork::getNumLayers()
-{
-    return weights.size();
-}
-
-inline int NeuralNetwork::getLayerSize(int layer)
-{
-    return weights.at(layer).size();
-}
-
-inline float NeuralNetwork::getWeight(int layer, int index, int inputIndex)
-{
-    return weights.at(layer).at(index).at(inputIndex);
-}
-
-inline float NeuralNetwork::getBias(int layer, int index)
-{
-    return biases.at(layer).at(index);
-}
 
 void NeuralNetwork::reinitialize(std::vector<int> config)
 {
-    std::default_random_engine randomDevice(0);//std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()).count());
+    std::default_random_engine randomDevice(time(0));
     std::uniform_real_distribution<float> floatRand(-1.0f, 1.0f);
 
     // Weights
@@ -66,6 +50,46 @@ void NeuralNetwork::reinitialize(std::vector<int> config)
             biases[i][j] = floatRand(randomDevice);
         }
     }
+
+    // maxLayerSize, for performance optimization
+    maxLayerSize = *(std::max_element(config.begin(), config.end()));
 }
+
+std::vector<float>
+NeuralNetwork::run(std::vector<float> input)
+{
+    std::vector<float> currentValues;
+    currentValues.resize(maxLayerSize);
+    std::vector<float> previousValues;
+    previousValues.resize(maxLayerSize);
+
+    for (size_t i = 0; i < input.size(); i++)
+    {
+        currentValues[i] = input[i] + getBias(0, i);
+    }
+
+    for (int layer = 1; layer < getNumLayers(); layer++)
+    {
+        std::swap(currentValues, previousValues);
+        for (int neuron = 0; neuron < getLayerSize(layer); neuron++)
+        {
+            float value = -getBias(layer, neuron);
+            for (int inputNeuron = 0; inputNeuron < getLayerSize(layer - 1); inputNeuron++)
+            {
+                value += previousValues[inputNeuron] * getWeight(layer, inputNeuron, neuron);
+            }
+            if (layer != getNumLayers() - 1)
+            {
+                value = value / (1 + std::fabs(value));
+            }
+            currentValues[neuron] = value;
+        }
+    }
+
+    currentValues.resize(getOutputSize());
+
+    return currentValues;
+}
+
 
 }

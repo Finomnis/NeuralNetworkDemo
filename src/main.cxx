@@ -5,6 +5,8 @@
 
 #include "Log.hxx"
 
+#include <iostream>
+
 #include <memory>
 
 int main(int, char *[])
@@ -14,6 +16,13 @@ int main(int, char *[])
     auto window = std::make_shared<SDL2Window>(sdl2Initializer, "NeuralNetworkDemo");
 
     std::shared_ptr<NeuralNetwork::NeuralNetwork> neuralNetwork = std::make_shared<NeuralNetwork::NeuralNetwork>(2, 1);
+
+    std::cout << "Neural network output: " << std::endl;
+    for (const auto &val : neuralNetwork->run({0.0f, 0.0f}))
+    {
+        std::cout << val << std::endl;
+    }
+
 
     NeuralNetwork::InteractiveSubwindow interactiveSubwindow(neuralNetwork);
     interactiveSubwindow.addToWindow(window, 0.0f, 0.0f, 0.6f, 1.0f);
