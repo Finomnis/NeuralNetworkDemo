@@ -18,22 +18,24 @@ InteractiveSubwindow::~InteractiveSubwindow()
 
 }
 
-void InteractiveSubwindow::render(SDL_Surface *surface)
+void InteractiveSubwindow::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
-    Uint32 col = SDL_MapRGB(surface->format, 0, 0, 0);
-    SDL_FillRect(surface, &(surface->clip_rect), col);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
 
-    Uint32 red = SDL_MapRGB(surface->format, 255, 64, 64);
-    Uint32 green = SDL_MapRGB(surface->format, 64, 255, 64);
     for (const auto &sample : samples)
     {
         float x = sample.inputs[0];
         float y = sample.inputs[1];
         float val = sample.outputs[0];
-        int px = int((surface->clip_rect.w - 1) * x + 0.5f);
-        int py = int((surface->clip_rect.h - 1) * y + 0.5f);
+        int px = rect.x + int((rect.w - 1) * x + 0.5f);
+        int py = rect.y + int((rect.h - 1) * y + 0.5f);
         SDL_Rect inner = {px - 3, py - 3, 7, 7};
-        SDL_FillRect(surface, &inner, val > 0 ? red : green);
+        if (val > 0)
+            SDL_SetRenderDrawColor(renderer, 255, 64, 64, 255);
+        else
+            SDL_SetRenderDrawColor(renderer, 64, 255, 64, 255);
+        SDL_RenderFillRect(renderer, &inner);
     }
 }
 
@@ -66,13 +68,18 @@ void InteractiveSubwindow::onEvent(SDL_Event &event, SDL_Rect &subwindowSize)
             rightButton = (event.button.button == SDL_BUTTON_RIGHT);
             break;
         case SDL_MOUSEBUTTONUP:
-            neuralNetwork->setTrainingData(samples);
+            if (trainingDataChanged)
+            {
+                neuralNetwork->setTrainingData(samples.begin(), samples.end());
+                trainingDataChanged = false;
+            }
             return;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_r)
             {
                 samples.clear();
-                neuralNetwork->setTrainingData(samples);
+                neuralNetwork->setTrainingData(samples.begin(), samples.end());
+                trainingDataChanged = false;
             }
             return;
         default:
@@ -105,7 +112,10 @@ InteractiveSubwindow::removeIntersectingSamples(SDL_Rect &subwindowSize, SDL_Poi
         int py = int((subwindowSize.h - 1) * y + 0.5f);
         if (mousePos.x >= px - 3 && mousePos.x <= px + 3
                 && mousePos.y >= py - 3 && mousePos.y <= py + 3)
+        {
             it = samples.erase(it);
+            trainingDataChanged = true;
+        }
         else
             it++;
     }
@@ -120,6 +130,7 @@ InteractiveSubwindow::addSample(SDL_Rect &subwindowSize, SDL_Point mousePos, flo
     TrainingSample sample = {{x, y}, {value}};
 
     samples.emplace_back(std::move(sample));
+    trainingDataChanged = true;
 }
 
 }

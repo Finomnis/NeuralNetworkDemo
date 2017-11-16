@@ -46,7 +46,6 @@ class SDL2Window
         SDL_Renderer *renderer;
         std::shared_ptr<SDL2Initializer> init;
         std::map<SDL2Subwindow *, SDL2SubwindowSize> subwindows;
-        std::map<SDL2Subwindow *, SDL_Surface *> subwindowRenderTargets;
 
         void addSubwindow(SDL2Subwindow *, float x0, float y0, float x1, float y1);
         void removeSubwindow(SDL2Subwindow *);
@@ -67,7 +66,7 @@ class SDL2Subwindow
         SDL2Subwindow();
         ~SDL2Subwindow();
         void addToWindow(std::shared_ptr<SDL2Window> window, float x0, float y0, float x1, float y1);
-        virtual void render(SDL_Surface *surface) = 0;
+        virtual void render(SDL_Renderer *renderer, SDL_Rect &rect) = 0;
         virtual void onEvent(SDL_Event &event, SDL_Rect &subwindowSize) = 0;
 
     protected:

@@ -18,7 +18,7 @@ class InteractiveSubwindow : public SDL2Subwindow
         InteractiveSubwindow(std::shared_ptr<NeuralNetwork> nn);
         ~InteractiveSubwindow();
 
-        void render(SDL_Surface *surface);
+        void render(SDL_Renderer *renderer, SDL_Rect &rect);
         void onEvent(SDL_Event &event, SDL_Rect &subwindowSize);
 
 
@@ -28,6 +28,8 @@ class InteractiveSubwindow : public SDL2Subwindow
         std::list<TrainingSample> samples;
         void removeIntersectingSamples(SDL_Rect &subwindowSize, SDL_Point mousePos);
         void addSample(SDL_Rect &subwindowSize, SDL_Point mousePos, float value);
+
+        bool trainingDataChanged = false;
 
 };
 

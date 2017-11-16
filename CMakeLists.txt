@@ -23,6 +23,8 @@ set(SRC
   src/NeuralNetwork/NeuralNetwork.cxx
   src/NeuralNetwork/InteractiveSubwindow.hxx
   src/NeuralNetwork/InteractiveSubwindow.cxx
+  src/NeuralNetwork/NetworkConfigSubwindow.hxx
+  src/NeuralNetwork/NetworkConfigSubwindow.cxx
 
 )
 add_executable(NeuralNetworkDemo ${SRC})

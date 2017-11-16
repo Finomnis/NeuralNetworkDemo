@@ -108,26 +108,15 @@ SDL2Window::onEvent(SDL_Event &event)
 void
 SDL2Window::render()
 {
+    SDL_RenderSetClipRect(renderer, nullptr);
     SDL(SDL_SetRenderDrawColor(renderer, 64, 0, 128, 255));
     SDL(SDL_RenderClear(renderer));
 
     for (auto &subwindow : subwindows)
     {
         SDL_Rect rect = getSubwindowRect(subwindow.second);
-        SDL_Surface *&surface = subwindowRenderTargets[subwindow.first];
-        if (surface == nullptr || surface->w != rect.w || surface->h != rect.h)
-        {
-            SDL_FreeSurface(surface);
-            surface = SDL_CreateRGBSurface(0, rect.w, rect.h, 32, 0x0000ff, 0x00ff00, 0xff0000, 0xff000000);
-            if (surface == nullptr)
-                Log::errAndQuit(SDL_GetError());
-        }
-        subwindow.first->render(surface);
-        SDL_Texture *tex = SDL_CreateTextureFromSurface(renderer, surface);
-        if (tex == nullptr)
-            Log::errAndQuit(SDL_GetError());
-        SDL(SDL_RenderCopy(renderer, tex, nullptr, &rect));
-        SDL_DestroyTexture(tex);
+        SDL_RenderSetClipRect(renderer, &rect);
+        subwindow.first->render(renderer, rect);
     }
 
     SDL_RenderPresent(renderer);
@@ -140,14 +129,6 @@ void SDL2Window::addSubwindow(SDL2Subwindow *subwindow, float x0, float y0, floa
 
 void SDL2Window::removeSubwindow(SDL2Subwindow *subwindow)
 {
-    {
-        auto renderTarget = subwindowRenderTargets.find(subwindow);
-        if (renderTarget != subwindowRenderTargets.end())
-        {
-            SDL_FreeSurface(renderTarget->second);
-        }
-    }
-    subwindowRenderTargets.erase(subwindow);
     subwindows.erase(subwindow);
 }
 
