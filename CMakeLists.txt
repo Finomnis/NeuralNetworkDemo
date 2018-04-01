@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(NeuralNetworkDemo)
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 14)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -pedantic-errors")
 
@@ -13,20 +13,7 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 
 # Create executable
-set(SRC
-  src/main.cxx
-  src/SDL2Windows.hxx
-  src/SDL2Windows.cxx
-  src/Log.hxx
-  src/Log.cxx
-  src/NeuralNetwork/NeuralNetwork.hxx
-  src/NeuralNetwork/NeuralNetwork.cxx
-  src/NeuralNetwork/InteractiveSubwindow.hxx
-  src/NeuralNetwork/InteractiveSubwindow.cxx
-  src/NeuralNetwork/NetworkConfigSubwindow.hxx
-  src/NeuralNetwork/NetworkConfigSubwindow.cxx
-
-)
+file(GLOB_RECURSE SRC "src/*.cxx" "src/*.hxx")
 add_executable(NeuralNetworkDemo ${SRC})
 
 # Link executable to dependencies

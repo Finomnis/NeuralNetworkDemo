@@ -60,6 +60,8 @@ void InteractiveSubwindow::renderNetworkTexture()
 
 void InteractiveSubwindow::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
+    //neuralNetwork->doTrainingStep();
+
     SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
     SDL_RenderFillRect(renderer, &rect);
 

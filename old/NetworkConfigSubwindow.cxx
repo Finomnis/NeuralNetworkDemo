@@ -77,7 +77,7 @@ void NetworkConfigSubwindow::render(SDL_Renderer *renderer, SDL_Rect &rect)
             SDL_Rect neuronRect = {neuronX - 3, neuronY - 3, 7, 7};
             SDL_Rect neuronOuterRect = {neuronX - 4, neuronY - 4, 9, 9};
 
-            setValueColor(renderer, neuralNetwork->getBias(i, j));
+            setValueColor(renderer, neuralNetwork->getBias(i, j) * 40);
             SDL_RenderFillRect(renderer, &neuronRect);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderDrawRect(renderer, &neuronOuterRect);
