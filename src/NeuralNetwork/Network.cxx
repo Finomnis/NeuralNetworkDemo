@@ -89,4 +89,18 @@ float Network::getParameter(size_t layerID, size_t parameterID) const
     return layers.at(layerID)->getParameter(parameterID);
 }
 
+const std::vector<float> &Network::getTrainingInput(size_t id) const
+{
+    return trainingInputs[id];
+}
+const std::vector<float> &Network::getTrainingOutput(size_t id) const
+{
+    return trainingOutputs[id];
+}
+
+float Network::getNumTrainingSamples() const
+{
+    return trainingInputs.size();
+}
+
 }

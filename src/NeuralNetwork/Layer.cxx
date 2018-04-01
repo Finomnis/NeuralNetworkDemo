@@ -1,6 +1,6 @@
 #include "Layer.hxx"
 
-#include "../Log.hxx"
+#include "../Util/Log.hxx"
 
 namespace NeuralNetwork
 {

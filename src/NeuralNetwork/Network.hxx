@@ -15,6 +15,9 @@ class Network
 
         const std::vector<float> compute(const std::vector<float> &input);
         void addTrainingSample(const std::vector<float> &input, const std::vector<float> &output);
+        float getNumTrainingSamples() const;
+        const std::vector<float> &getTrainingInput(size_t id) const;
+        const std::vector<float> &getTrainingOutput(size_t id) const;
         float trainingStep(float stepWidth);
         float getParameter(size_t layerID, size_t parameterID) const;
 
