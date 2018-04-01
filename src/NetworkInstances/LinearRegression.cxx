@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <chrono>
+#include <random>
 #include <iostream>
 
 namespace
@@ -84,6 +85,19 @@ LinearRegression::LinearRegression()
     layers.push_back(std::move(regressionLayer));
 
     network = std::make_unique<NeuralNetwork::Network>(std::move(layers), std::move(errorLayer));
+
+    std::mt19937 rng(std::chrono::system_clock::now().time_since_epoch().count());
+    for (int i = 0; i < 1000; i++)
+    {
+        std::normal_distribution<float> gauss{0, 0.2};
+        std::uniform_real_distribution<float> uniform{0, 5};
+        float x = uniform(rng);
+        float y = (3 - 0.8 * x) + gauss(rng);
+        if (x > 2.5)
+            y = (3 - 0.8 * (5 - x)) + gauss(rng);
+
+        addTrainingSample(x, y);
+    }
 }
 
 
@@ -113,4 +127,77 @@ void LinearRegression::run()
     float a = network->getParameter(0, 0);
     float b = network->getParameter(0, 1);
     std::cout << "Result: " << a << " * x " << (b < 0 ? "- " : "+ ") << std::abs(b) << std::endl;
+}
+
+
+namespace
+{
+
+const float MIN_X = -1.0f;
+const float MAX_X = 6.0f;
+const float MIN_Y = -2.0f;
+const float MAX_Y = 5.0f;
+void convertAddressToPixel(SDL_Rect &rect, float x, float y, int &px, int &py)
+{
+
+    px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5f);
+    py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5f);
+}
+
+}
+
+void LinearRegression::render(SDL_Renderer *renderer, SDL_Rect &rect)
+{
+    network->trainingStep(0.03);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+
+
+    for (size_t i = 0; i < network->getNumTrainingSamples(); i++)
+    {
+        int px, py;
+
+        float pointX = network->getTrainingInput(i)[0];
+        float pointY = network->getTrainingOutput(i)[0];
+
+        convertAddressToPixel(rect, pointX, pointY, px, py);
+
+        SDL_Rect pointRect = {px - 1, py - 1, 3, 3};
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_RenderFillRect(renderer, &pointRect);
+    }
+
+    {
+        float a = network->getParameter(0, 0);
+        float b = network->getParameter(0, 1);
+        int x0, y0, x1, y1;
+        convertAddressToPixel(rect, MIN_X, a * MIN_X + b, x0, y0);
+        convertAddressToPixel(rect, MAX_X, a * MAX_X + b, x1, y1);
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_RenderDrawLine(renderer, x0, y0, x1, y1);
+    }
+
+}
+
+
+void LinearRegression::onEvent(SDL_Event &event, SDL_Rect &rect)
+{
+    //SDL_Point mousePos;
+    //bool leftButton = false;
+    switch (event.type)
+    {
+        case SDL_MOUSEBUTTONDOWN:
+            if (!isMouseInsideSubwindow(event.button.x, event.button.y, rect))
+                return;
+            //mousePos = relativeMousePosition(event.button.x, event.button.y, subwindowSize);
+            //leftButton = (event.button.button == SDL_BUTTON_LEFT);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            return;
+        case SDL_KEYDOWN:
+            return;
+        default:
+            return;
+    }
 }

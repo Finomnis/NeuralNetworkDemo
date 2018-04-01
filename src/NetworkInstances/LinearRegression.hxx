@@ -1,16 +1,23 @@
 #pragma once
 
 #include "../NeuralNetwork/NeuralNetwork.hxx"
+#include "../Util/SDL2Windows.hxx"
 
 #include <memory>
+#include <atomic>
+#include <tuple>
 
-class LinearRegression
+class LinearRegression : public SDL2Subwindow
 {
     public:
         LinearRegression();
         void addTrainingSample(float x, float y);
         void run();
 
+        void render(SDL_Renderer *renderer, SDL_Rect &rect) override;
+        void onEvent(SDL_Event &event, SDL_Rect &subwindowSize) override;
+
     private:
         std::unique_ptr<NeuralNetwork::Network> network;
 };
+
