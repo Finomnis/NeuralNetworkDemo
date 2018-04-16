@@ -95,6 +95,17 @@ void PointsRegressionDemo::onEvent(SDL_Event &event, SDL_Rect &rect)
         case SDL_MOUSEBUTTONUP:
             return;
         case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+                case SDLK_ESCAPE:
+                case SDLK_q:
+                    SDL_Event sdlevent;
+                    sdlevent.type = SDL_QUIT;
+                    SDL_PushEvent(&sdlevent);
+                    break;
+                default:
+                    break;
+            }
             return;
         default:
             return;
