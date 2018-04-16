@@ -1,85 +1,19 @@
 #include "LinearRegression.hxx"
 
+#include "../CommonLayers/LinearLayer.hxx"
+#include "../CommonLayers/MeanSquaredErrorLayer.hxx"
+
 #include <thread>
 #include <chrono>
 #include <random>
 #include <iostream>
 
-namespace
-{
-class LinearRegressionLayer : public NeuralNetwork::Layer
-{
-    public:
-        LinearRegressionLayer(): NeuralNetwork::Layer(1, 1, 2)
-        {
-            setParameter(0, 1);
-            setParameter(1, 0);
-        }
-    private:
-        void op(const std::vector<double> &input,
-                std::vector<double> &output) const override
-        {
-            double a = getParameter(0);
-            double b = getParameter(1);
-            double x = input[0];
-
-            output[0] = a * x + b;
-        }
-        void bprop(const std::vector<double> &input,
-                   const std::vector<double> &outputGradient,
-                   std::vector<double> &inputGradient,
-                   std::vector<double> &parameterGradient) const override
-        {
-            double a = getParameter(0);
-            //double b = getParameter(1);
-            double x = input[0];
-
-            // d(out)/d(param)
-            parameterGradient[0] = x * outputGradient[0];
-            parameterGradient[1] = outputGradient[0];
-
-            // d(out)/d(in)
-            inputGradient[0] = a * outputGradient[0];
-        }
-};
-
-class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
-{
-    public:
-        MeanSquaredErrorLayer()
-            : NeuralNetwork::ErrorLayer(1)
-        {
-        }
-    private:
-        void op(const std::vector<double> &input, std::vector<double> &output) const override
-        {
-            const auto &expectedInput = getExpectedResult();
-
-            double sum = 0.0;
-            for (size_t i = 0; i < input.size(); i++)
-            {
-                double difference = input[i] - expectedInput[i];
-                sum += difference * difference;
-            }
-            output[0] = sum;
-        }
-        void bprop(const std::vector<double> &input, const std::vector<double> &outputGradient, std::vector<double> &inputGradient, std::vector<double> &) const override
-        {
-            const auto &expectedInput = getExpectedResult();
-
-            for (size_t i = 0; i < input.size(); i++)
-            {
-                inputGradient[i] = 2 * (input[i] - expectedInput[i]) * outputGradient[0];
-            }
-        }
-};
-}
 
 
 LinearRegression::LinearRegression()
 {
-    std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearRegressionLayer>();
-    std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>();
+    std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearLayer>(1, 1);
+    std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>(1);
 
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
     layers.push_back(std::move(regressionLayer));
