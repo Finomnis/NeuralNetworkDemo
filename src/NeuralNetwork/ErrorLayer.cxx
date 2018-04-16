@@ -3,7 +3,7 @@
 namespace NeuralNetwork
 {
 
-ErrorLayer::ErrorLayer(int inputSize)
+ErrorLayer::ErrorLayer(size_t inputSize)
     : Layer(inputSize, 1, 0),
       expectedResult(inputSize)
 {

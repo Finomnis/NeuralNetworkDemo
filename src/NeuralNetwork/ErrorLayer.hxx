@@ -9,7 +9,7 @@ namespace NeuralNetwork
 class ErrorLayer : public Layer
 {
     public:
-        ErrorLayer(int inputSize);
+        ErrorLayer(size_t inputSize);
         void setExpectedResult(const std::vector<double> &result);
     private:
         std::vector<double> expectedResult;
