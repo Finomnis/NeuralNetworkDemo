@@ -1,5 +1,7 @@
 #include "Relu.hxx"
 
+#include "../CommonLayers/ReluLayer.hxx"
+
 #include <thread>
 #include <chrono>
 #include <random>
@@ -12,13 +14,11 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
     public:
         LinearRegressionLayer(): NeuralNetwork::Layer(1, 1, 2)
         {
-            setParameter(0, 1);
-            setParameter(1, 0);
+            setParameter(0, 0);
+            setParameter(1, 10);
         }
-        virtual ~LinearRegressionLayer() = default;
-    private:
-        LinearRegressionLayer(const LinearRegressionLayer &e) = delete;
 
+    private:
         void op(const std::vector<float> &input,
                 std::vector<float> &output) const override
         {
@@ -45,16 +45,14 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
             inputGradient[0] = a * outputGradient[0];
         }
 };
-class ReluLayer : public NeuralNetwork::Layer
+/*class ReluLayer : public NeuralNetwork::Layer
 {
     public:
         ReluLayer(): NeuralNetwork::Layer(1, 1, 0)
         {
         }
-        virtual ~ReluLayer() = default;
-    private:
-        ReluLayer(const ReluLayer &) = delete;
 
+    private:
         void op(const std::vector<float> &input,
                 std::vector<float> &output) const override
         {
@@ -66,7 +64,7 @@ class ReluLayer : public NeuralNetwork::Layer
                 output[0] = 0;
         }
         void bprop(const std::vector<float> &input,
-                   const std::vector<float> &,
+                   const std::vector<float> &outputGradient,
                    std::vector<float> &inputGradient,
                    std::vector<float> &) const override
         {
@@ -77,11 +75,12 @@ class ReluLayer : public NeuralNetwork::Layer
 
             // d(out)/d(in)
             if (x > 0)
-                inputGradient[0] = 1;
+                inputGradient[0] = outputGradient[0];
             else
                 inputGradient[0] = 0;
+
         }
-};
+};*/
 
 class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
 {
@@ -90,9 +89,6 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
             : NeuralNetwork::ErrorLayer(1)
         {
         }
-        virtual ~MeanSquaredErrorLayer() = default;
-    private:
-        MeanSquaredErrorLayer(const MeanSquaredErrorLayer &a) = delete;
 
         void op(const std::vector<float> &input, std::vector<float> &output) const override
         {
@@ -122,7 +118,7 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
 Relu::Relu()
 {
     std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearRegressionLayer>();
-    std::unique_ptr<NeuralNetwork::Layer> reluLayer = std::make_unique<ReluLayer>();
+    std::unique_ptr<NeuralNetwork::Layer> reluLayer = std::make_unique<ReluLayer>(1);
     std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>();
 
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
