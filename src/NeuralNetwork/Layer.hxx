@@ -10,7 +10,8 @@ class Layer
 {
     public:
         Layer(size_t inputSize, size_t outputSize, size_t numParameters);
-        ~Layer() = default;
+        virtual ~Layer() = default;
+        Layer(const Layer &) = delete;
 
         void setInputValues(const std::vector<float> &input);
         const std::vector<float> &getOutputValues() const;

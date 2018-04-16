@@ -1,4 +1,4 @@
-#include "LinearRegression.hxx"
+#include "Relu.hxx"
 
 #include <thread>
 #include <chrono>
@@ -15,7 +15,10 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
             setParameter(0, 1);
             setParameter(1, 0);
         }
+        virtual ~LinearRegressionLayer() = default;
     private:
+        LinearRegressionLayer(const LinearRegressionLayer &e) = delete;
+
         void op(const std::vector<float> &input,
                 std::vector<float> &output) const override
         {
@@ -42,6 +45,43 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
             inputGradient[0] = a * outputGradient[0];
         }
 };
+class ReluLayer : public NeuralNetwork::Layer
+{
+    public:
+        ReluLayer(): NeuralNetwork::Layer(1, 1, 0)
+        {
+        }
+        virtual ~ReluLayer() = default;
+    private:
+        ReluLayer(const ReluLayer &) = delete;
+
+        void op(const std::vector<float> &input,
+                std::vector<float> &output) const override
+        {
+            float x = input[0];
+
+            if (x > 0)
+                output[0] = x;
+            else
+                output[0] = 0;
+        }
+        void bprop(const std::vector<float> &input,
+                   const std::vector<float> &,
+                   std::vector<float> &inputGradient,
+                   std::vector<float> &) const override
+        {
+            float x = input[0];
+
+            // d(out)/d(param)
+            // Not params
+
+            // d(out)/d(in)
+            if (x > 0)
+                inputGradient[0] = 1;
+            else
+                inputGradient[0] = 0;
+        }
+};
 
 class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
 {
@@ -50,7 +90,10 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
             : NeuralNetwork::ErrorLayer(1)
         {
         }
+        virtual ~MeanSquaredErrorLayer() = default;
     private:
+        MeanSquaredErrorLayer(const MeanSquaredErrorLayer &a) = delete;
+
         void op(const std::vector<float> &input, std::vector<float> &output) const override
         {
             const auto &expectedInput = getExpectedResult();
@@ -76,25 +119,29 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
 }
 
 
-LinearRegression::LinearRegression()
+Relu::Relu()
 {
     std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearRegressionLayer>();
+    std::unique_ptr<NeuralNetwork::Layer> reluLayer = std::make_unique<ReluLayer>();
     std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>();
 
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
     layers.push_back(std::move(regressionLayer));
+    layers.push_back(std::move(reluLayer));
 
     network = std::make_unique<NeuralNetwork::Network>(std::move(layers), std::move(errorLayer));
 
-    std::mt19937 rng(std::chrono::system_clock::now().time_since_epoch().count());
+    std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
     for (int i = 0; i < 1000; i++)
     {
-        std::normal_distribution<float> gauss{0, 0.2};
+        std::normal_distribution<float> gauss{0, 0.2f};
         std::uniform_real_distribution<float> uniform{0, 5};
         float x = uniform(rng);
-        float y = (3 - 0.8 * x) + gauss(rng);
-        //if (x > 2.5)
-        //    y = (3 - 0.8 * (5 - x)) + gauss(rng);
+        float y = 3.0f - 1.3f * x;
+        if (y < 0)
+            y = 0;
+
+        y += gauss(rng);
 
         addTrainingSample(x, y);
     }
@@ -102,14 +149,14 @@ LinearRegression::LinearRegression()
 
 
 
-void LinearRegression::addTrainingSample(float x, float y)
+void Relu::addTrainingSample(float x, float y)
 {
     std::vector<float> in = {x};
     std::vector<float> out = {y};
     network->addTrainingSample(in, out);
 }
 
-void LinearRegression::run()
+void Relu::run()
 {
     float error = 1000;
     while (true)
@@ -117,8 +164,8 @@ void LinearRegression::run()
         //std::cout << "Current value at 1: " << network->compute(std::vector<float>({1})).at(0) << std::endl;
         //std::cout << "Current value at 3: " << network->compute(std::vector<float>({3})).at(0) << std::endl;
         //std::cout << "Current value at 4: " << network->compute(std::vector<float>({4})).at(0) << std::endl;
-        float previousError = network->trainingStep(0.03);
-        if (std::abs(previousError - error) < 0.00000001)
+        float previousError = network->trainingStep(0.03f);
+        if (std::abs(previousError - error) < 0.00000001f)
             break;
         error = previousError;
         std::cout << "Error before trainingStep: " << previousError << std::endl;
@@ -143,12 +190,18 @@ void convertAddressToPixel(SDL_Rect &rect, float x, float y, int &px, int &py)
     px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5f);
     py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5f);
 }
+void convertPixelToAddress(SDL_Rect &rect, int px, int py, float &x, float &y)
+{
+    x = (float(px) / rect.w) * (MAX_X - MIN_X) + MIN_X;
+    y = (float(py) / rect.h) * (MAX_Y - MIN_Y) + MIN_Y;
+}
 
 }
 
-void LinearRegression::render(SDL_Renderer *renderer, SDL_Rect &rect)
+void Relu::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
-    network->trainingStep(0.03);
+
+    network->trainingStep(0.03f);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
@@ -169,19 +222,32 @@ void LinearRegression::render(SDL_Renderer *renderer, SDL_Rect &rect)
     }
 
     {
-        float a = network->getParameter(0, 0);
-        float b = network->getParameter(0, 1);
-        int x0, y0, x1, y1;
-        convertAddressToPixel(rect, MIN_X, a * MIN_X + b, x0, y0);
-        convertAddressToPixel(rect, MAX_X, a * MAX_X + b, x1, y1);
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawLine(renderer, x0, y0, x1, y1);
+        float preY = 0;
+        for (int px = 0; px < rect.w; px++)
+        {
+            float x, dummy;
+            convertPixelToAddress(rect, px, 0, x, dummy);
+
+            float y = network->compute({x}).at(0);
+
+            if (px != 0)
+            {
+                int px1, px2, py1, py2;
+                convertAddressToPixel(rect, x - 1, preY, px1, py1);
+                convertAddressToPixel(rect, x, y, px2, py2);
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_RenderDrawLine(renderer, px - 1, py1, px, py2);
+            }
+
+            preY = y;
+        }
     }
+
 
 }
 
 
-void LinearRegression::onEvent(SDL_Event &event, SDL_Rect &rect)
+void Relu::onEvent(SDL_Event &event, SDL_Rect &rect)
 {
     //SDL_Point mousePos;
     //bool leftButton = false;

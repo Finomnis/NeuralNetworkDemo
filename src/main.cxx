@@ -1,5 +1,5 @@
 #include "Util/Log.hxx"
-#include "NetworkInstances/LinearRegression.hxx"
+#include "NetworkInstances/Relu.hxx"
 #include "Util/SDL2Windows.hxx"
 
 #include <iostream>
@@ -15,11 +15,11 @@ int main(int argc, char *argv [])
     auto window = std::make_shared<SDL2Window>(sdl2Initializer, "NeuralNetworkDemo");
 
     std::vector<std::string> args;
-    args.reserve(argc);
+    args.reserve(size_t(argc));
     for (int i = 0; i < argc; i++)
         args.emplace_back(argv[i]);
 
-    LinearRegression testNetwork;
+    Relu testNetwork;
 
     testNetwork.addToWindow(window, 0, 0, 1, 1);
 
