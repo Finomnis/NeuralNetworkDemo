@@ -94,7 +94,7 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
         {
             const auto &expectedInput = getExpectedResult();
 
-            double sum = 0.0f;
+            double sum = 0.0;
             for (size_t i = 0; i < input.size(); i++)
             {
                 double difference = input[i] - expectedInput[i];
@@ -130,10 +130,10 @@ Relu::Relu()
     std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
     for (int i = 0; i < 1000; i++)
     {
-        std::normal_distribution<double> gauss{0, 0.2f};
+        std::normal_distribution<double> gauss{0, 0.2};
         std::uniform_real_distribution<double> uniform{0, 5};
         double x = uniform(rng);
-        double y = 3.0f - 1.3f * x;
+        double y = 3.0 - 1.3 * x;
         if (y < 0)
             y = 0;
 
@@ -160,8 +160,8 @@ void Relu::run()
         //std::cout << "Current value at 1: " << network->compute(std::vector<double>({1})).at(0) << std::endl;
         //std::cout << "Current value at 3: " << network->compute(std::vector<double>({3})).at(0) << std::endl;
         //std::cout << "Current value at 4: " << network->compute(std::vector<double>({4})).at(0) << std::endl;
-        double previousError = network->trainingStep(0.03f);
-        if (std::abs(previousError - error) < 0.00000001f)
+        double previousError = network->trainingStep(0.03);
+        if (std::abs(previousError - error) < 0.00000001)
             break;
         error = previousError;
         std::cout << "Error before trainingStep: " << previousError << std::endl;
@@ -176,15 +176,15 @@ void Relu::run()
 namespace
 {
 
-const double MIN_X = -1.0f;
-const double MAX_X = 6.0f;
-const double MIN_Y = -2.0f;
-const double MAX_Y = 5.0f;
+const double MIN_X = -1.0;
+const double MAX_X = 6.0;
+const double MIN_Y = -2.0;
+const double MAX_Y = 5.0;
 void convertAddressToPixel(SDL_Rect &rect, double x, double y, int &px, int &py)
 {
 
-    px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5f);
-    py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5f);
+    px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5);
+    py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5);
 }
 void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 {
@@ -197,7 +197,7 @@ void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 void Relu::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
 
-    network->trainingStep(0.03f);
+    network->trainingStep(0.03);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
