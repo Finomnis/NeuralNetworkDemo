@@ -1,4 +1,5 @@
 #include "Util/Log.hxx"
+#include "NetworkInstances/LinearRegression.hxx"
 #include "NetworkInstances/Relu.hxx"
 #include "Util/SDL2Windows.hxx"
 
