@@ -10,11 +10,11 @@ class ErrorLayer : public Layer
 {
     public:
         ErrorLayer(int inputSize);
-        void setExpectedResult(const std::vector<float> &result);
+        void setExpectedResult(const std::vector<double> &result);
     private:
-        std::vector<float> expectedResult;
+        std::vector<double> expectedResult;
     protected:
-        const std::vector<float> &getExpectedResult() const;
+        const std::vector<double> &getExpectedResult() const;
 };
 
 }

@@ -19,23 +19,23 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
         }
 
     private:
-        void op(const std::vector<float> &input,
-                std::vector<float> &output) const override
+        void op(const std::vector<double> &input,
+                std::vector<double> &output) const override
         {
-            float a = getParameter(0);
-            float b = getParameter(1);
-            float x = input[0];
+            double a = getParameter(0);
+            double b = getParameter(1);
+            double x = input[0];
 
             output[0] = a * x + b;
         }
-        void bprop(const std::vector<float> &input,
-                   const std::vector<float> &outputGradient,
-                   std::vector<float> &inputGradient,
-                   std::vector<float> &parameterGradient) const override
+        void bprop(const std::vector<double> &input,
+                   const std::vector<double> &outputGradient,
+                   std::vector<double> &inputGradient,
+                   std::vector<double> &parameterGradient) const override
         {
-            float a = getParameter(0);
-            //float b = getParameter(1);
-            float x = input[0];
+            double a = getParameter(0);
+            //double b = getParameter(1);
+            double x = input[0];
 
             // d(out)/d(param)
             parameterGradient[0] = x * outputGradient[0];
@@ -53,22 +53,22 @@ class LinearRegressionLayer : public NeuralNetwork::Layer
         }
 
     private:
-        void op(const std::vector<float> &input,
-                std::vector<float> &output) const override
+        void op(const std::vector<double> &input,
+                std::vector<double> &output) const override
         {
-            float x = input[0];
+            double x = input[0];
 
             if (x > 0)
                 output[0] = x;
             else
                 output[0] = 0;
         }
-        void bprop(const std::vector<float> &input,
-                   const std::vector<float> &outputGradient,
-                   std::vector<float> &inputGradient,
-                   std::vector<float> &) const override
+        void bprop(const std::vector<double> &input,
+                   const std::vector<double> &outputGradient,
+                   std::vector<double> &inputGradient,
+                   std::vector<double> &) const override
         {
-            float x = input[0];
+            double x = input[0];
 
             // d(out)/d(param)
             // Not params
@@ -90,19 +90,19 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
         {
         }
 
-        void op(const std::vector<float> &input, std::vector<float> &output) const override
+        void op(const std::vector<double> &input, std::vector<double> &output) const override
         {
             const auto &expectedInput = getExpectedResult();
 
-            float sum = 0.0f;
+            double sum = 0.0f;
             for (size_t i = 0; i < input.size(); i++)
             {
-                float difference = input[i] - expectedInput[i];
+                double difference = input[i] - expectedInput[i];
                 sum += difference * difference;
             }
             output[0] = sum;
         }
-        void bprop(const std::vector<float> &input, const std::vector<float> &outputGradient, std::vector<float> &inputGradient, std::vector<float> &) const override
+        void bprop(const std::vector<double> &input, const std::vector<double> &outputGradient, std::vector<double> &inputGradient, std::vector<double> &) const override
         {
             const auto &expectedInput = getExpectedResult();
 
@@ -130,10 +130,10 @@ Relu::Relu()
     std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
     for (int i = 0; i < 1000; i++)
     {
-        std::normal_distribution<float> gauss{0, 0.2f};
-        std::uniform_real_distribution<float> uniform{0, 5};
-        float x = uniform(rng);
-        float y = 3.0f - 1.3f * x;
+        std::normal_distribution<double> gauss{0, 0.2f};
+        std::uniform_real_distribution<double> uniform{0, 5};
+        double x = uniform(rng);
+        double y = 3.0f - 1.3f * x;
         if (y < 0)
             y = 0;
 
@@ -145,30 +145,30 @@ Relu::Relu()
 
 
 
-void Relu::addTrainingSample(float x, float y)
+void Relu::addTrainingSample(double x, double y)
 {
-    std::vector<float> in = {x};
-    std::vector<float> out = {y};
+    std::vector<double> in = {x};
+    std::vector<double> out = {y};
     network->addTrainingSample(in, out);
 }
 
 void Relu::run()
 {
-    float error = 1000;
+    double error = 1000;
     while (true)
     {
-        //std::cout << "Current value at 1: " << network->compute(std::vector<float>({1})).at(0) << std::endl;
-        //std::cout << "Current value at 3: " << network->compute(std::vector<float>({3})).at(0) << std::endl;
-        //std::cout << "Current value at 4: " << network->compute(std::vector<float>({4})).at(0) << std::endl;
-        float previousError = network->trainingStep(0.03f);
+        //std::cout << "Current value at 1: " << network->compute(std::vector<double>({1})).at(0) << std::endl;
+        //std::cout << "Current value at 3: " << network->compute(std::vector<double>({3})).at(0) << std::endl;
+        //std::cout << "Current value at 4: " << network->compute(std::vector<double>({4})).at(0) << std::endl;
+        double previousError = network->trainingStep(0.03f);
         if (std::abs(previousError - error) < 0.00000001f)
             break;
         error = previousError;
         std::cout << "Error before trainingStep: " << previousError << std::endl;
         //std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    float a = network->getParameter(0, 0);
-    float b = network->getParameter(0, 1);
+    double a = network->getParameter(0, 0);
+    double b = network->getParameter(0, 1);
     std::cout << "Result: " << a << " * x " << (b < 0 ? "- " : "+ ") << std::abs(b) << std::endl;
 }
 
@@ -176,20 +176,20 @@ void Relu::run()
 namespace
 {
 
-const float MIN_X = -1.0f;
-const float MAX_X = 6.0f;
-const float MIN_Y = -2.0f;
-const float MAX_Y = 5.0f;
-void convertAddressToPixel(SDL_Rect &rect, float x, float y, int &px, int &py)
+const double MIN_X = -1.0f;
+const double MAX_X = 6.0f;
+const double MIN_Y = -2.0f;
+const double MAX_Y = 5.0f;
+void convertAddressToPixel(SDL_Rect &rect, double x, double y, int &px, int &py)
 {
 
     px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5f);
     py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5f);
 }
-void convertPixelToAddress(SDL_Rect &rect, int px, int py, float &x, float &y)
+void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 {
-    x = (float(px) / rect.w) * (MAX_X - MIN_X) + MIN_X;
-    y = (float(py) / rect.h) * (MAX_Y - MIN_Y) + MIN_Y;
+    x = (double(px) / rect.w) * (MAX_X - MIN_X) + MIN_X;
+    y = (double(py) / rect.h) * (MAX_Y - MIN_Y) + MIN_Y;
 }
 
 }
@@ -207,8 +207,8 @@ void Relu::render(SDL_Renderer *renderer, SDL_Rect &rect)
     {
         int px, py;
 
-        float pointX = network->getTrainingInput(i)[0];
-        float pointY = network->getTrainingOutput(i)[0];
+        double pointX = network->getTrainingInput(i)[0];
+        double pointY = network->getTrainingOutput(i)[0];
 
         convertAddressToPixel(rect, pointX, pointY, px, py);
 
@@ -218,13 +218,13 @@ void Relu::render(SDL_Renderer *renderer, SDL_Rect &rect)
     }
 
     {
-        float preY = 0;
+        double preY = 0;
         for (int px = 0; px < rect.w; px++)
         {
-            float x, dummy;
+            double x, dummy;
             convertPixelToAddress(rect, px, 0, x, dummy);
 
-            float y = network->compute({x}).at(0);
+            double y = network->compute({x}).at(0);
 
             if (px != 0)
             {

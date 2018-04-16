@@ -13,20 +13,20 @@ class Network
         Network(std::vector<std::unique_ptr<Layer>> &&layers,
                 std::unique_ptr<ErrorLayer> &&errorLayer);
 
-        const std::vector<float> compute(const std::vector<float> &input);
-        void addTrainingSample(const std::vector<float> &input, const std::vector<float> &output);
-        float getNumTrainingSamples() const;
-        const std::vector<float> &getTrainingInput(size_t id) const;
-        const std::vector<float> &getTrainingOutput(size_t id) const;
-        float trainingStep(float stepWidth);
-        float getParameter(size_t layerID, size_t parameterID) const;
+        const std::vector<double> compute(const std::vector<double> &input);
+        void addTrainingSample(const std::vector<double> &input, const std::vector<double> &output);
+        double getNumTrainingSamples() const;
+        const std::vector<double> &getTrainingInput(size_t id) const;
+        const std::vector<double> &getTrainingOutput(size_t id) const;
+        double trainingStep(double stepWidth);
+        double getParameter(size_t layerID, size_t parameterID) const;
 
     private:
         std::vector<std::unique_ptr<Layer>> layers;
         std::unique_ptr<ErrorLayer> errorLayer;
 
-        std::vector<std::vector<float>> trainingInputs;
-        std::vector<std::vector<float>> trainingOutputs;
+        std::vector<std::vector<double>> trainingInputs;
+        std::vector<std::vector<double>> trainingOutputs;
 
 };
 

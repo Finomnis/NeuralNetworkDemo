@@ -4,12 +4,12 @@ ReluLayer::ReluLayer(size_t numLayers): NeuralNetwork::Layer(numLayers, numLayer
 {
 }
 
-void ReluLayer::op(const std::vector<float> &input,
-                   std::vector<float> &output) const
+void ReluLayer::op(const std::vector<double> &input,
+                   std::vector<double> &output) const
 {
-    for (size_t i = 0; i < input.size(); i++)
+    for (size_t i = 0; i < inputSize; i++)
     {
-        float x = input.at(i);
+        double x = input.at(i);
 
         if (x > 0)
             output.at(i) = x;
@@ -18,14 +18,14 @@ void ReluLayer::op(const std::vector<float> &input,
     }
 }
 
-void ReluLayer::bprop(const std::vector<float> &input,
-                      const std::vector<float> &outputGradient,
-                      std::vector<float> &inputGradient,
-                      std::vector<float> &) const
+void ReluLayer::bprop(const std::vector<double> &input,
+                      const std::vector<double> &outputGradient,
+                      std::vector<double> &inputGradient,
+                      std::vector<double> &) const
 {
-    for (size_t i = 0; i < input.size(); i++)
+    for (size_t i = 0; i < inputSize; i++)
     {
-        float x = input.at(i);
+        double x = input.at(i);
 
         if (x > 0)
             inputGradient.at(i) = outputGradient.at(i);

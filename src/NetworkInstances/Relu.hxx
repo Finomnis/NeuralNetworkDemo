@@ -12,7 +12,7 @@ class Relu : public SDL2Subwindow
     public:
         Relu();
         virtual ~Relu() = default;
-        void addTrainingSample(float x, float y);
+        void addTrainingSample(double x, double y);
         void run();
 
         void render(SDL_Renderer *renderer, SDL_Rect &rect) override;

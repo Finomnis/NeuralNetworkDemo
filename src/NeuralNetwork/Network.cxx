@@ -13,13 +13,13 @@ Network::Network(std::vector<std::unique_ptr<Layer> > &&layers_,
 
 }
 
-const std::vector<float> Network::compute(const std::vector<float> &input)
+const std::vector<double> Network::compute(const std::vector<double> &input)
 {
     if (layers.empty())
         return input;
 
-    std::vector<float> currentInput = input;
-    std::vector<float> currentOutput;
+    std::vector<double> currentInput = input;
+    std::vector<double> currentOutput;
     for (const auto &layer : layers)
     {
         currentOutput.resize(layer->outputSize);
@@ -30,16 +30,16 @@ const std::vector<float> Network::compute(const std::vector<float> &input)
     return currentInput;
 }
 
-void Network::addTrainingSample(const std::vector<float> &input,
-                                const std::vector<float> &output)
+void Network::addTrainingSample(const std::vector<double> &input,
+                                const std::vector<double> &output)
 {
     trainingInputs.push_back(input);
     trainingOutputs.push_back(output);
 }
 
-float Network::trainingStep(float stepWidth)
+double Network::trainingStep(double stepWidth)
 {
-    float error = 0;
+    double error = 0;
 
     for (auto &layer : layers)
         layer->clearTrainingData();
@@ -48,22 +48,22 @@ float Network::trainingStep(float stepWidth)
     {
         // forward
         {
-            std::vector<float> inputValues = trainingInputs[i];
+            std::vector<double> inputValues = trainingInputs.at(i);
             for (auto &layer : layers)
             {
                 layer->setInputValues(inputValues);
                 layer->compute();
                 inputValues = layer->getOutputValues();
             }
-            errorLayer->setExpectedResult(trainingOutputs[i]);
+            errorLayer->setExpectedResult(trainingOutputs.at(i));
             errorLayer->setInputValues(inputValues);
             errorLayer->compute();
-            error += errorLayer->getOutputValues()[0];
+            error += errorLayer->getOutputValues().at(0);
         }
 
         // back propagation
         {
-            std::vector<float> childGradient = errorLayer->backPropagate(std::vector<float>({1}));
+            std::vector<double> childGradient = errorLayer->backPropagate(std::vector<double>({1}));
             for (auto it = layers.rbegin(); it != layers.rend(); it++)
             {
                 childGradient = (*it)->backPropagate(childGradient);
@@ -84,21 +84,21 @@ float Network::trainingStep(float stepWidth)
     return error;
 }
 
-float Network::getParameter(size_t layerID, size_t parameterID) const
+double Network::getParameter(size_t layerID, size_t parameterID) const
 {
     return layers.at(layerID)->getParameter(parameterID);
 }
 
-const std::vector<float> &Network::getTrainingInput(size_t id) const
+const std::vector<double> &Network::getTrainingInput(size_t id) const
 {
-    return trainingInputs[id];
+    return trainingInputs.at(id);
 }
-const std::vector<float> &Network::getTrainingOutput(size_t id) const
+const std::vector<double> &Network::getTrainingOutput(size_t id) const
 {
-    return trainingOutputs[id];
+    return trainingOutputs.at(id);
 }
 
-float Network::getNumTrainingSamples() const
+double Network::getNumTrainingSamples() const
 {
     return trainingInputs.size();
 }

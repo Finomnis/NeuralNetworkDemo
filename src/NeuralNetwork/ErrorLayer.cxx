@@ -9,12 +9,12 @@ ErrorLayer::ErrorLayer(int inputSize)
 {
 
 }
-void ErrorLayer::setExpectedResult(const std::vector<float> &result)
+void ErrorLayer::setExpectedResult(const std::vector<double> &result)
 {
     expectedResult = result;
 }
 
-const std::vector<float> &ErrorLayer::getExpectedResult() const
+const std::vector<double> &ErrorLayer::getExpectedResult() const
 {
     return expectedResult;
 }

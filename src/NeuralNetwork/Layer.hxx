@@ -13,23 +13,23 @@ class Layer
         virtual ~Layer() = default;
         Layer(const Layer &) = delete;
 
-        void setInputValues(const std::vector<float> &input);
-        const std::vector<float> &getOutputValues() const;
+        void setInputValues(const std::vector<double> &input);
+        const std::vector<double> &getOutputValues() const;
 
-        void setParameter(size_t id, float value);
-        float getParameter(size_t id) const;
+        void setParameter(size_t id, double value);
+        double getParameter(size_t id) const;
 
         void compute();
-        void computeDirect(const std::vector<float> &input, std::vector<float> &output) const;
-        const std::vector<float> &backPropagate(const std::vector<float> &childGradient);
+        void computeDirect(const std::vector<double> &input, std::vector<double> &output) const;
+        const std::vector<double> &backPropagate(const std::vector<double> &childGradient);
 
         void finishCurrentTrainingSample();
-        void walkGradient(float stepWidth);
+        void walkGradient(double stepWidth);
         void clearTrainingData();
 
     protected:
-        virtual void op(const std::vector<float> &input, std::vector<float> &output) const = 0;
-        virtual void bprop(const std::vector<float> &input, const std::vector<float> &outputGradient, std::vector<float> &inputGradient, std::vector<float> &parameterGradient) const = 0;
+        virtual void op(const std::vector<double> &input, std::vector<double> &output) const = 0;
+        virtual void bprop(const std::vector<double> &input, const std::vector<double> &outputGradient, std::vector<double> &inputGradient, std::vector<double> &parameterGradient) const = 0;
 
     public:
         const size_t inputSize;
@@ -37,12 +37,12 @@ class Layer
 
     private:
         size_t numParameters;
-        std::vector<float> inputValues;
-        std::vector<float> outputValues;
-        std::vector<float> parameters;
-        std::vector<float> currentGradient;
-        std::vector<float> currentInputGradient;
-        std::vector<float> gradientSum;
+        std::vector<double> inputValues;
+        std::vector<double> outputValues;
+        std::vector<double> parameters;
+        std::vector<double> currentGradient;
+        std::vector<double> currentInputGradient;
+        std::vector<double> gradientSum;
         uint32_t numGradients;
 };
 
