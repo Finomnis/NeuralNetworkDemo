@@ -11,7 +11,6 @@ class Relu : public SDL2Subwindow
 {
     public:
         Relu();
-        virtual ~Relu() = default;
         void addTrainingSample(double x, double y);
         void run();
 

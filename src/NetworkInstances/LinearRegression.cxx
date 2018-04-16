@@ -86,7 +86,7 @@ LinearRegression::LinearRegression()
 
     network = std::make_unique<NeuralNetwork::Network>(std::move(layers), std::move(errorLayer));
 
-    std::mt19937 rng(std::chrono::system_clock::now().time_since_epoch().count());
+    std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
     for (int i = 0; i < 1000; i++)
     {
         std::normal_distribution<double> gauss{0, 0.2};
@@ -140,8 +140,8 @@ const double MAX_Y = 5.0;
 void convertAddressToPixel(SDL_Rect &rect, double x, double y, int &px, int &py)
 {
 
-    px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5f);
-    py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5f);
+    px = int((x - MIN_X) / (MAX_X - MIN_X) * rect.w + 0.5);
+    py = int((y - MIN_Y) / (MAX_Y - MIN_Y) * rect.h + 0.5);
 }
 
 }
