@@ -38,7 +38,7 @@ class SDL2Window
         friend class SDL2Initializer;
         friend class SDL2Subwindow;
     public:
-        SDL2Window(std::shared_ptr<SDL2Initializer> init, std::string name);
+        SDL2Window(std::shared_ptr<SDL2Initializer> init, const std::string &name);
         ~SDL2Window();
 
     private:
@@ -64,7 +64,7 @@ class SDL2Subwindow
 {
     public:
         SDL2Subwindow();
-        ~SDL2Subwindow();
+        virtual ~SDL2Subwindow();
         void addToWindow(std::shared_ptr<SDL2Window> window, float x0, float y0, float x1, float y1);
         virtual void render(SDL_Renderer *renderer, SDL_Rect &rect) = 0;
         virtual void onEvent(SDL_Event &event, SDL_Rect &subwindowSize) = 0;

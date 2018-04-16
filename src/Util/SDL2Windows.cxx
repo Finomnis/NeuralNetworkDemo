@@ -67,7 +67,7 @@ void SDL2Initializer::runMainLoop()
 }
 
 
-SDL2Window::SDL2Window(std::shared_ptr<SDL2Initializer> init_, std::string name)
+SDL2Window::SDL2Window(std::shared_ptr<SDL2Initializer> init_, const std::string &name)
     : init(init_)
 {
     Log::msg("Creating window '" + name + "' ...");
