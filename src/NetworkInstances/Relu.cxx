@@ -2,6 +2,7 @@
 
 #include "../CommonLayers/ReluLayer.hxx"
 #include "../CommonLayers/LinearLayer.hxx"
+#include "../CommonLayers/MeanSquaredErrorLayer.hxx"
 
 #include <thread>
 #include <chrono>
@@ -82,7 +83,7 @@ namespace
 
         }
 };*/
-
+/*
 class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
 {
     public:
@@ -112,7 +113,7 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
                 inputGradient[i] = 2 * (input[i] - expectedInput[i]) * outputGradient[0];
             }
         }
-};
+};*/
 }
 
 
@@ -120,7 +121,7 @@ Relu::Relu()
 {
     std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearLayer>(1, 1);
     std::unique_ptr<NeuralNetwork::Layer> reluLayer = std::make_unique<ReluLayer>(1);
-    std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>();
+    std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>(1);
 
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
     layers.push_back(std::move(regressionLayer));
