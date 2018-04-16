@@ -55,7 +55,7 @@ class MeanSquaredErrorLayer : public NeuralNetwork::ErrorLayer
         {
             const auto &expectedInput = getExpectedResult();
 
-            double sum = 0.0f;
+            double sum = 0.0;
             for (size_t i = 0; i < input.size(); i++)
             {
                 double difference = input[i] - expectedInput[i];
@@ -133,10 +133,10 @@ void LinearRegression::run()
 namespace
 {
 
-const double MIN_X = -1.0f;
-const double MAX_X = 6.0f;
-const double MIN_Y = -2.0f;
-const double MAX_Y = 5.0f;
+const double MIN_X = -1.0;
+const double MAX_X = 6.0;
+const double MIN_Y = -2.0;
+const double MAX_Y = 5.0;
 void convertAddressToPixel(SDL_Rect &rect, double x, double y, int &px, int &py)
 {
 
