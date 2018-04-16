@@ -2,6 +2,9 @@
 
 #include "../Util/Log.hxx"
 
+#include <random>
+#include <chrono>
+
 namespace NeuralNetwork
 {
 
@@ -102,5 +105,13 @@ double Layer::getParameter(size_t id) const
     return parameters.at(id);
 }
 
+double Layer::getRandom(double min, double max)
+{
+    static std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
+
+    std::uniform_real_distribution<double> uniform{min, max};
+
+    return uniform(rng);
+}
 
 }

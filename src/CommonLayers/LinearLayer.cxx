@@ -8,10 +8,10 @@ LinearLayer::LinearLayer(size_t inputSize, size_t outputSize):
     {
         for (size_t inId = 0; inId < inputSize; inId++)
         {
-            setParameter(numParametersPerOutput * outId + inId, 0);
+            setParameter(numParametersPerOutput * outId + inId, getRandom(-1, 1));
         }
 
-        setParameter(numParametersPerOutput * outId + inputSize, 3);
+        setParameter(numParametersPerOutput * outId + inputSize, getRandom(0, 3));
     }
 }
 

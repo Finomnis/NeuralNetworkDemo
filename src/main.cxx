@@ -1,6 +1,7 @@
 #include "Util/Log.hxx"
 #include "NetworkInstances/LinearRegression.hxx"
 #include "NetworkInstances/Relu.hxx"
+#include "NetworkInstances/SmallestFullNetwork.hxx"
 #include "Util/SDL2Windows.hxx"
 
 #include <iostream>
@@ -20,7 +21,7 @@ int main(int argc, char *argv [])
     for (int i = 0; i < argc; i++)
         args.emplace_back(argv[i]);
 
-    Relu testNetwork;
+    SmallestFullNetwork testNetwork;
 
     testNetwork.addToWindow(window, 0, 0, 1, 1);
 

@@ -36,7 +36,10 @@ void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 void PointsRegressionDemo::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
 
-    network->trainingStep(0.03);
+    for (size_t i = 0; i < 3; i++)
+    {
+        network->trainingStep(0.005);
+    }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &rect);

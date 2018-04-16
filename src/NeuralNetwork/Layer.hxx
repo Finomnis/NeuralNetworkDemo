@@ -27,6 +27,8 @@ class Layer
         void walkGradient(double stepWidth);
         void clearTrainingData();
 
+        double getRandom(double min, double max);
+
     protected:
         virtual void op(const std::vector<double> &input, std::vector<double> &output) const = 0;
         virtual void bprop(const std::vector<double> &input, const std::vector<double> &outputGradient, std::vector<double> &inputGradient, std::vector<double> &parameterGradient) const = 0;
