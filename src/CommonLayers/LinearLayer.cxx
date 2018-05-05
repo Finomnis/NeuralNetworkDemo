@@ -1,7 +1,8 @@
 #include "LinearLayer.hxx"
 
-LinearLayer::LinearLayer(size_t inputSize, size_t outputSize):
-    NeuralNetwork::Layer(inputSize, outputSize, inputSize * outputSize + outputSize)
+LinearLayer::LinearLayer(size_t inputSize, size_t outputSize, double regularization):
+    NeuralNetwork::Layer(inputSize, outputSize, inputSize * outputSize + outputSize),
+    regularization(regularization)
 {
     const size_t numParametersPerOutput = inputSize + 1;
     for (size_t outId = 0; outId < outputSize; outId++)
@@ -55,7 +56,7 @@ void LinearLayer::bprop(const std::vector<double> &input,
             double x = input.at(inId);
             double a = getParameter(numParametersPerOutput * outId + inId);
 
-            parameterGradient.at(numParametersPerOutput * outId + inId) = x * outputGradient.at(outId);
+            parameterGradient.at(numParametersPerOutput * outId + inId) = x * outputGradient.at(outId) + regularization * a;
             inputGradient.at(inId) += a * outputGradient.at(outId);
         }
 

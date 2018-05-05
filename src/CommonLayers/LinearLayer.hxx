@@ -5,7 +5,7 @@
 class LinearLayer : public NeuralNetwork::Layer
 {
     public:
-        LinearLayer(size_t inputSize, size_t outputSize);
+        LinearLayer(size_t inputSize, size_t outputSize, double regularization = 0.0);
 
     private:
         void op(const std::vector<double> &input,
@@ -14,4 +14,5 @@ class LinearLayer : public NeuralNetwork::Layer
                    const std::vector<double> &outputGradient,
                    std::vector<double> &inputGradient,
                    std::vector<double> &parameterGradient) const override;
+        double regularization;
 };
