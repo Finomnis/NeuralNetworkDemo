@@ -12,9 +12,9 @@ SmallestFullNetwork::SmallestFullNetwork()
 {
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
 
-    layers.emplace_back(std::make_unique<LinearLayer>(1, 15, 0.001));
+    layers.emplace_back(std::make_unique<LinearLayer>(1, 15, 0.001, -1, 1, 0, 3));
     layers.emplace_back(std::make_unique<LeakyReluLayer>(15));
-    layers.emplace_back(std::make_unique<LinearLayer>(15, 1, 0.001));
+    layers.emplace_back(std::make_unique<LinearLayer>(15, 1, 0.001, -1, 1, 0, 3));
 
     std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>(1);
 

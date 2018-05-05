@@ -5,7 +5,7 @@
 class LinearLayer : public NeuralNetwork::Layer
 {
     public:
-        LinearLayer(size_t inputSize, size_t outputSize, double regularization = 0.0);
+        LinearLayer(size_t inputSize, size_t outputSize, double regularization = 0.0, double aMin = -5, double aMax = 5, double bMin = -1, double bMax = 3);
 
     private:
         void op(const std::vector<double> &input,
