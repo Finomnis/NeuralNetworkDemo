@@ -41,11 +41,35 @@ void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 
 void PointsRegressionDemo::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
+    double error = 0.0;
     auto start = std::chrono::high_resolution_clock::now();
     while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() < 10)
     {
-        network->trainingStep(stepwidth);
+        error = network->trainingStep(stepwidth);
     }
+    printf("Error: %f\n", error);
+    printf("f(0.5): %f\n", network->compute({0.5}).front());
+
+    for (size_t i = 0; i < network->getNumLayers(); i++)
+    {
+        size_t preferredParameterGrouping = network->getPreferredParameterGrouping(i);
+
+        printf("Layer %ld:", (long)i);
+        for (size_t j = 0; j < network->getNumParameters(i); j++)
+        {
+            if (j % preferredParameterGrouping == 0)
+                printf("\n   ");
+            double param = network->getParameter(i, j);
+            if (param > 0)
+                printf("  %f", param);
+            else
+                printf(" %f", param);
+        }
+        printf("\n");
+    }
+
+    fflush(stdout);
+
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
