@@ -1,5 +1,7 @@
 #include "PointsRegressionDemo.hxx"
 
+#include <chrono>
+
 void PointsRegressionDemo::addTrainingSample(double x, double y)
 {
     std::vector<double> in = {x};
@@ -35,8 +37,8 @@ void convertPixelToAddress(SDL_Rect &rect, int px, int py, double &x, double &y)
 
 void PointsRegressionDemo::render(SDL_Renderer *renderer, SDL_Rect &rect)
 {
-
-    for (size_t i = 0; i < 3; i++)
+    auto start = std::chrono::high_resolution_clock::now();
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() < 10)
     {
         network->trainingStep(0.005);
     }
