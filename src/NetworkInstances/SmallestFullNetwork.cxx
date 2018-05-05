@@ -8,12 +8,13 @@
 #include <random>
 
 SmallestFullNetwork::SmallestFullNetwork()
+    : PointsRegressionDemo(0.005)
 {
     std::vector<std::unique_ptr<NeuralNetwork::Layer>> layers;
 
-    layers.emplace_back(std::make_unique<LinearLayer>(1, 15, 0.01));
+    layers.emplace_back(std::make_unique<LinearLayer>(1, 15, 0.001));
     layers.emplace_back(std::make_unique<LeakyReluLayer>(15));
-    layers.emplace_back(std::make_unique<LinearLayer>(15, 1, 0.01));
+    layers.emplace_back(std::make_unique<LinearLayer>(15, 1, 0.001));
 
     std::unique_ptr<NeuralNetwork::ErrorLayer> errorLayer = std::make_unique<MeanSquaredErrorLayer>(1);
 

@@ -2,6 +2,10 @@
 
 #include <chrono>
 
+PointsRegressionDemo::PointsRegressionDemo(double stepwidth)
+    : stepwidth(stepwidth)
+{}
+
 void PointsRegressionDemo::addTrainingSample(double x, double y)
 {
     std::vector<double> in = {x};
@@ -40,7 +44,7 @@ void PointsRegressionDemo::render(SDL_Renderer *renderer, SDL_Rect &rect)
     auto start = std::chrono::high_resolution_clock::now();
     while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() < 10)
     {
-        network->trainingStep(0.005);
+        network->trainingStep(stepwidth);
     }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

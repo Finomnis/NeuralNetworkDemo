@@ -8,6 +8,7 @@
 #include <random>
 
 Relu::Relu()
+    : PointsRegressionDemo(0.005)
 {
     std::unique_ptr<NeuralNetwork::Layer> regressionLayer = std::make_unique<LinearLayer>(1, 1);
     std::unique_ptr<NeuralNetwork::Layer> reluLayer = std::make_unique<ReluLayer>(1);

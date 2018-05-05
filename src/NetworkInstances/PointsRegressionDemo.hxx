@@ -8,7 +8,7 @@
 class PointsRegressionDemo : public SDL2Subwindow
 {
     protected:
-        PointsRegressionDemo() = default;
+        PointsRegressionDemo(double stepwidth);
         void addTrainingSample(double x, double y);
         void createNetwork(std::vector<std::unique_ptr<NeuralNetwork::Layer>> &&layers,
                            std::unique_ptr<NeuralNetwork::ErrorLayer> &&errorLayer);
@@ -18,5 +18,6 @@ class PointsRegressionDemo : public SDL2Subwindow
 
     private:
         std::unique_ptr<NeuralNetwork::Network> network;
+        double stepwidth;
 };
 
