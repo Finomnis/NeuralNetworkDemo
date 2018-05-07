@@ -18,6 +18,7 @@ class Layer
 
         void setParameter(size_t id, double value);
         double getParameter(size_t id) const;
+        size_t getNumParameters() const;
 
         void compute();
         void computeDirect(const std::vector<double> &input, std::vector<double> &output) const;

@@ -37,6 +37,26 @@ void Network::addTrainingSample(const std::vector<double> &input,
     trainingOutputs.push_back(output);
 }
 
+size_t Network::getNumLayers() const
+{
+    return layers.size();
+}
+
+size_t Network::getNumParameters(size_t layerId) const
+{
+    return layers.at(layerId)->getNumParameters();
+}
+
+size_t Network::getPreferredParameterGrouping(size_t layerId) const
+{
+    const auto &layer = layers.at(layerId);
+
+    if (layer->outputSize == 0)
+        return 0;
+
+    return layer->getNumParameters() / layer->outputSize;
+}
+
 double Network::trainingStep(double stepWidth)
 {
     double error = 0;

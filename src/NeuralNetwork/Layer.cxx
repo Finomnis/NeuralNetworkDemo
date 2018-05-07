@@ -105,6 +105,11 @@ double Layer::getParameter(size_t id) const
     return parameters.at(id);
 }
 
+size_t Layer::getNumParameters() const
+{
+    return parameters.size();
+}
+
 double Layer::getRandom(double min, double max)
 {
     static std::mt19937 rng(uint32_t(std::chrono::system_clock::now().time_since_epoch().count()));
